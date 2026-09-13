@@ -1,0 +1,43 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Customer {
+  id            String      @id @map("customer_id")
+  name          String
+  email         String
+  passwordHash  String      @map("password_hash")
+  orders        Order[]
+}
+
+model Product {
+  id            String      @id @map("product_id")
+  productName   String      @map("product_name")
+  currentPrice  Float       @map("current_price")
+  stockQty      Int         @map("stock_qty")
+  orderItems    OrderItem[]
+}
+
+model Order {
+  id            String      @id @map("order_id")
+  orderDate     DateTime    @map("order_date")
+  customerId    String      @map("customer_id")
+  customer      Customer    @relation(fields: [customerId], references: [id])
+  paymentStatus String      @map("payment_status")
+  orderItems    OrderItem[]
+}
+
+model OrderItem {
+  id            Int         @id @map("order_item_id")
+  orderId       String      @map("order_id")
+  order         Order       @relation(fields: [orderId], references: [id])
+  productId     String      @map("product_id")
+  product       Product     @relation(fields: [productId], references: [id])
+  quantity      Int
+  purchasePrice Float       @map("purchase_price")
+}

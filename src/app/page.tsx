@@ -1,7 +1,9 @@
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/prisma'
 import DataViewer from './DataViewer'
 
-const prisma = new PrismaClient()
+// Query the database on every request instead of at build time,
+// so the build does not need a reachable DATABASE_URL.
+export const dynamic = 'force-dynamic'
 
 export default async function Home() {
   const customerCount = await prisma.customer.count()
